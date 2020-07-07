@@ -2,13 +2,28 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import RecipeCard from "./../RecipeCard/RecipeCard";
 import "./Home.css";
+import store, {RESET} from '../../store';
 
 class Home extends Component {
   constructor(props) {
     super(props);
+    const reduxStore = store.getState();
+    console.log(reduxStore.recipes)
     this.state = {
-      recipes: []
+      recipes: reduxStore.recipes
     };
+  }
+
+  componentDidMount() {
+    store.dispatch({
+      type: RESET
+    })
+    store.subscribe(() => {
+      const reduxState = store.getState();
+      this.setState({
+        recipes: reduxState.recipes
+      })
+    })
   }
 
   render() {
@@ -18,10 +33,11 @@ class Home extends Component {
           key={i}
           name={recipe.name}
           category={recipe.category}
-          authorFirst={recipe.authorFirst}
-          authorLast={recipe.authorLast}
+          authorFirst={recipe.first_name}
+          authorLast={recipe.last_name}
           ingredients={recipe.ingredients}
           instructions={recipe.instructions}
+          id={recipe.id}
         />
       );
     });
